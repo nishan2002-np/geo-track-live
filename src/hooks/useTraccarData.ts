@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Device, Position } from '../types/gps';
 import { traccarApi } from '../services/traccarApi';
-import { useToast } from './use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 export function useTraccarData() {
   const [devices, setDevices] = useState<Device[]>([]);

@@ -2,8 +2,18 @@ import React, { useEffect, useRef, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import { Device, Position } from '../types/gps';
 import { DevicePopup } from './DevicePopup';
-import { Icon, LatLngBounds, LatLngTuple } from 'leaflet';
+import L, { Icon, LatLngBounds, LatLngTuple } from 'leaflet';
+
+// Import Leaflet CSS
 import 'leaflet/dist/leaflet.css';
+
+// Fix Leaflet default markers
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 // Custom marker icons
 const createCustomIcon = (status: 'online' | 'idle' | 'offline') => {
@@ -13,7 +23,7 @@ const createCustomIcon = (status: 'online' | 'idle' | 'offline') => {
     offline: '#ef4444'
   };
 
-  return new Icon({
+  return new L.Icon({
     iconUrl: `data:image/svg+xml;base64,${btoa(`
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="8" fill="${colors[status]}" stroke="white" stroke-width="2"/>
@@ -48,7 +58,7 @@ function MapController({
         });
       }
     } else if (positions.length > 0) {
-      const bounds = new LatLngBounds([]);
+      const bounds = new L.LatLngBounds([]);
       positions.forEach(pos => {
         bounds.extend([pos.latitude, pos.longitude]);
       });
