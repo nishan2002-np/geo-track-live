@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTraccarData } from '../hooks/useTraccarData';
+import { DarkMap } from '../components/DarkMap';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
@@ -10,7 +11,8 @@ import {
   WifiOff, 
   Navigation2,
   MapPin,
-  Activity
+  Activity,
+  Map as MapIcon
 } from 'lucide-react';
 
 const Index = () => {
@@ -19,10 +21,13 @@ const Index = () => {
     positions,
     loading,
     error,
+    selectedDevice,
     refreshData,
     getDeviceStatus,
+    selectDevice,
   } = useTraccarData();
 
+  const [showMap, setShowMap] = useState(true);
   const onlineDevices = devices.filter(device => getDeviceStatus(device) === 'online').length;
 
   if (loading && devices.length === 0) {
@@ -74,7 +79,7 @@ const Index = () => {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1 text-gps-online">
                 <Wifi className="h-4 w-4" />
-                <span className="text-sm">Connected</span>
+                <span className="text-sm hidden sm:inline">Connected</span>
               </div>
               
               <Badge variant="outline" className="bg-gps-online/10 text-gps-online border-gps-online/20">
@@ -84,6 +89,16 @@ const Index = () => {
               <Badge variant="outline">
                 {devices.length} Total
               </Badge>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowMap(!showMap)}
+                className="flex items-center gap-1"
+              >
+                <MapIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">{showMap ? 'Hide' : 'Show'} Map</span>
+              </Button>
 
               <Button
                 variant="outline"
@@ -100,6 +115,29 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">
+        {showMap && positions.length > 0 && (
+          <div className="mb-6">
+            <Card className="p-4">
+              <div className="flex items-center gap-2 mb-4">
+                <MapIcon className="h-5 w-5 text-primary" />
+                <h2 className="text-lg font-semibold">Live Tracking Map</h2>
+                <Badge variant="secondary" className="ml-auto">
+                  {positions.length} Active
+                </Badge>
+              </div>
+              <div className="h-96 w-full">
+                <DarkMap
+                  devices={devices}
+                  positions={positions}
+                  selectedDevice={selectedDevice}
+                  onDeviceSelect={selectDevice}
+                  getDeviceStatus={getDeviceStatus}
+                />
+              </div>
+            </Card>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Device List */}
           <div className="lg:col-span-2">
@@ -113,9 +151,16 @@ const Index = () => {
                 {devices.map((device) => {
                   const position = positions.find(p => p.deviceId === device.id);
                   const status = getDeviceStatus(device);
+                  const isSelected = selectedDevice?.id === device.id;
                   
                   return (
-                    <Card key={device.id} className="p-3 hover:bg-muted/50 transition-colors">
+                    <Card 
+                      key={device.id} 
+                      className={`p-3 hover:bg-muted/50 transition-colors cursor-pointer ${
+                        isSelected ? 'ring-2 ring-primary bg-primary/5' : ''
+                      }`}
+                      onClick={() => selectDevice(device)}
+                    >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className={`w-3 h-3 rounded-full ${
