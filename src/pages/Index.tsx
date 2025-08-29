@@ -1,11 +1,15 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import React from 'react';
 
 const Index = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl font-bold text-primary">GeoTrack Live</h1>
+        <p className="text-xl text-muted-foreground">Real-time GPS Tracking Dashboard</p>
+        <div className="flex items-center justify-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-primary animate-pulse"></div>
+          <p className="text-sm text-muted-foreground">System Ready</p>
+        </div>
       </div>
     </div>
   );
