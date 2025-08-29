@@ -128,7 +128,6 @@ export function MapView({
           if (!device) return null;
 
           const status = getDeviceStatus(device);
-          const isSelected = selectedDevice?.id === device.id;
 
           return (
             <Marker
@@ -156,7 +155,9 @@ export function MapView({
         })}
 
         {/* Route polyline for selected device */}
-        {selectedDevice && deviceRoutes[selectedDevice.id] && deviceRoutes[selectedDevice.id].length > 1 && (
+        {selectedDevice && 
+         deviceRoutes[selectedDevice.id] && 
+         deviceRoutes[selectedDevice.id].length > 1 && (
           <Polyline
             positions={deviceRoutes[selectedDevice.id]}
             pathOptions={{
